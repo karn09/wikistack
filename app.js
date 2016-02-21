@@ -3,8 +3,9 @@ var express = require('express'),
   bodyParser = require('body-parser'),
   app = express(),
   swig = require('swig'),
-  routes = require('./routes');
-
+  // routes = require('./routes'),
+  wikiRouter = require('./routes/wiki.js');
+  require('./filters')(swig);
 
 app.set('views', './views');
 app.set('view engine', 'html');
@@ -17,7 +18,8 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
-app.use('/', routes);
+// app.use('/', routes);
+app.use('/wiki', wikiRouter);
 app.use(express.static('./public'));
 
 var server = app.listen(3000, function() {

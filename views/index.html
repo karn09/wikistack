@@ -1,9 +1,17 @@
 {% extends "layout.html" %}
-
 {% block content %}
-  <h3>Pages</h3>
-  <hr>
-  <ul class="list-unstyled">
-    <!-- PLACEHOLDER LIST OF PAGES -->
-  </ul>
+<h3>Pages</h3>
+<hr>
+{% if pages.length > 0 %}
+<ul class="list-unstyled">
+  <!-- PLACEHOLDER LIST OF PAGES -->
+  {% for page in pages %}
+  <!-- <li><a href='{{page.route}}'>{{page.title}}</a></li> -->
+  <li>{{ page | pageLink }}
+    {% endfor %}
+</ul>
+{% else %}
+There are no pages. Why don't you
+<a href='/wiki/add'>add one</a>?
+{% endif %}
 {% endblock %}

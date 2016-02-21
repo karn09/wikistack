@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h4>User:
+  <a href="mailto:{{email}}">{{name}}</a>
+</h4>
+<hr/>
+<div>Pages Authored:</div>
+<div class="page-body">
+  {% if pages.length > 0 %}
+  <ul class="list-unstyled">
+    <!-- PLACEHOLDER LIST OF PAGES -->
+    {% for page in pages %}
+    <!-- <li><a href='{{page.route}}'>{{page.title}}</a></li> -->
+    <li>{{ page | pageLink }}
+      {% endfor %}
+  </ul>
+{% endif %}
+</div>
+<hr/>
+<a href="PLACEHOLDER_URL_TITLE/edit" class="btn btn-primary">edit this page</a>
+<a href="PLACEHOLDER_URL_TITLE/delete" class="btn btn-danger">delete this page</a>
+{% endblock %}

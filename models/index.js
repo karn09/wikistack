@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var marked = require('marked');
 // Notice the `mongodb` protocol; Mongo is basically a kind of server,
 // which handles database requests and sends responses. It's async!
 
@@ -29,6 +30,9 @@ pageSchema.pre('validate', function(next) {
 pageSchema.virtual('route').get(function () {
   return '/wiki/' + this.urlTitle;
 });
+pageSchema.virtual('renderedContent').get(function() {
+  return marked(this.content);
+})
 
 pageSchema.statics.findByTag = function(tag){
     return this.find({ tags: {$elemMatch: { $eq: tag } } }).exec();
@@ -57,6 +61,10 @@ userSchema.statics.findOrCreate = function(userObj) {
     });
   });
 };
+
+pageSchema.statics.deDupeTitle = function(title) {
+  var self = this
+}
 
 function generateUrlTitle (title) {
   if (!title) {

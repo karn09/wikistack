@@ -102,6 +102,70 @@ router.get('/add', function(req, res, next) {
   res.render('addPage')
 });
 
+router.get('/:urlTitle/edit', function(req, res) {
+  var pageFound = Page.findOne({
+    urlTitle: req.params.urlTitle
+  });
+  pageFound
+    .populate('author')
+    .then(function(page) {
+      res.render('editpage', {
+        page: page
+      });
+    })
+});
+
+router.post('/:urlTitle/edit', function(req, res) {
+  var pageFound = Page.findOne({
+    urlTitle: req.params.urlTitle
+  });
+
+  var user = User.findOrCreate({
+    email: req.body.email,
+    name: req.body.name
+  });
+
+  user.then(function(user_record) {
+      // new Page({
+      //     title: req.body.title,
+      //     content: req.body.content,
+      //     tags: req.body.tags.split(' '),
+      //     author: user_record._id
+      //   })
+      pageFound.then(function(page) {
+        //     title: req.body.title,
+        //     content: req.body.content,
+        //     tags: req.body.tags.split(' '),
+        //     author: user_record._id
+        })
+        .save()
+        .then(function(form) {
+          res.redirect(form.route)
+        })
+    })
+    .catch(function(error) {
+      res.render('error', {
+        message: error.message,
+        error: error
+      })
+    });
+
+
+
+
+});
+
+router.get('/:urlTitle/delete', function(req, res) {
+  var pageRem = Page.remove({
+    urlTitle: req.params.urlTitle
+  })
+  pageRem.then(function(page) {
+    console.log(page.result);
+    res.redirect('/wiki');
+  })
+
+})
+
 router.get('/:urlTitle/similar', function(req, res) {
   var pageFound = Page.findOne({
     urlTitle: req.params.urlTitle
@@ -130,7 +194,9 @@ router.get('/:urlTitle', function(req, res) {
   pageFound
     .populate('author')
     .then(function(page) {
-      res.render('wikipage', page)
+      res.render('wikipage', {
+        page: page
+      })
     })
     .catch(function(err) {
       res.render('error', {

@@ -38,6 +38,8 @@ pageSchema.statics.findByTag = function(tag){
     return this.find({ tags: {$elemMatch: { $eq: tag } } }).exec();
 };
 
+
+
 pageSchema.methods.findSimilar = function(cb) {
   console.log('Searching for similar tags...');
   // this.tags

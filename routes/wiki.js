@@ -1,4 +1,5 @@
 var router = require('express').Router();
+var Promise = require('bluebird'); // can also set mongoose to use this.
 var User = require('../models').User;
 var Page = require('../models').Page;
 // var User = require('../models/user')
@@ -102,6 +103,71 @@ router.get('/add', function(req, res, next) {
   res.render('addPage')
 });
 
+
+router.post('/:id/edit', function(req, res) {
+  var pageFound = Page.findById(req.params.id);
+
+  pageFound.populate('author')
+    .then(function(page) {
+      page.title = req.body.title;
+      // page.author.email = req.body.email; // doesn't work
+      // page.author.name = req.body.name; // doesn't work
+      page.content = req.body.content;
+      page.tags = req.body.tags.split(' ');
+      if (page.author.email !== req.body.email || page.author.name !== req.body.name) {
+        User.findByIdAndUpdate(page.author._id, {
+          $set: {
+            name: page.author.name,
+            email: page.author.email
+          }
+        }, function(err, user) {
+          if (err) console.log(err)
+          console.log(user)
+        })
+      }
+      page.save();
+      res.redirect('/wiki/' + page.urlTitle)
+    })
+    // var user = User.findOrCreate({
+    //   email: req.body.email,
+    //   name: req.body.name
+    // }).exec();
+    //
+    // console.log(pageFound, + 'asd')
+    // Promise.join(pageFound, user, function(page, user) {
+    //   console.log(page, user)
+    //
+    // }).catch(next);
+    // user.then(function(user_record) {
+    //     // new Page({
+    //     //     title: req.body.title,
+    //     //     content: req.body.content,
+    //     //     tags: req.body.tags.split(' '),
+    //     //     author: user_record._id
+    //     //   })
+    //     pageFound.then(function(page) {
+    //       //     title: req.body.title,
+    //       //     content: req.body.content,
+    //       //     tags: req.body.tags.split(' '),
+    //       //     author: user_record._id
+    //       })
+    //       .save()
+    //       .then(function(form) {
+    //         res.redirect(form.route)
+    //       })
+    //   })
+    //   .catch(function(error) {
+    //     res.render('error', {
+    //       message: error.message,
+    //       error: error
+    //     })
+    //   });
+    //
+    //
+
+
+});
+
 router.get('/:urlTitle/edit', function(req, res) {
   var pageFound = Page.findOne({
     urlTitle: req.params.urlTitle
@@ -113,46 +179,6 @@ router.get('/:urlTitle/edit', function(req, res) {
         page: page
       });
     })
-});
-
-router.post('/:urlTitle/edit', function(req, res) {
-  var pageFound = Page.findOne({
-    urlTitle: req.params.urlTitle
-  });
-
-  var user = User.findOrCreate({
-    email: req.body.email,
-    name: req.body.name
-  });
-
-  user.then(function(user_record) {
-      // new Page({
-      //     title: req.body.title,
-      //     content: req.body.content,
-      //     tags: req.body.tags.split(' '),
-      //     author: user_record._id
-      //   })
-      pageFound.then(function(page) {
-        //     title: req.body.title,
-        //     content: req.body.content,
-        //     tags: req.body.tags.split(' '),
-        //     author: user_record._id
-        })
-        .save()
-        .then(function(form) {
-          res.redirect(form.route)
-        })
-    })
-    .catch(function(error) {
-      res.render('error', {
-        message: error.message,
-        error: error
-      })
-    });
-
-
-
-
 });
 
 router.get('/:urlTitle/delete', function(req, res) {

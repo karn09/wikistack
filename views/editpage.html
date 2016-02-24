@@ -1,7 +1,7 @@
 {% extends "layout.html" %} {% block content %}
 <h3>Edit a Page</h3>
 <hr>
-<form method="POST" action="/wiki/">
+<form method="POST" action="/wiki/{{page.id}}/edit">
 
   <div class="form-group">
     <label for="name" class="col-sm-2 control-label">Name</label>
